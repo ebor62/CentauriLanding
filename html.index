@@ -1,1 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Thank You</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap');
 
+    body {
+      background-color: #333;
+      color: white;
+      font-family: 'Source Code Pro', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      padding: 5rem;
+    }
+
+    .output {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid white;
+      display: inline;
+    }
+
+    p {
+      font-size: 20px;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid white;
+      display: inline;
+    }
+
+    .cursor::after {
+      content: '';
+      display: inline-block;
+      margin-left: 3px;
+      background-color: white;
+      animation-name: blink;
+      animation-duration: 0.5s;
+      animation-iteration-count: infinite;
+    }
+
+    h1.cursor::after {
+      height: 24px;
+      width: 13px;
+    }
+
+    p.cursor::after {
+      height: 13px;
+      width: 6px;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+      49% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="output" id="output">
+      <h1 class="cursor"></h1>
+      <p></p>
+    </div>
+  </div>
+  <script>
+    var i = 0,
+        a = 0,
+        isBackspacing = false,
+        isParagraph = false;
+
+    var textArray = [
+      "Why did the astronaut break up with his girlfriend?|He needed space.", 
+      "What do you call a space magician?|An astro-nomical illusionist!", 
+      "Why did the moon get a job?|To get a little more space cash!",
+      "What do you call a space explorer who loves coding?|An intergalactic programmer!",
+      "Why did the computer go to space?|To find its lost bytes!",
+      "Thank you for joining us on this stellar journey.|We’ll see you among the stars on December 14th!",
+      "You’ve just made the leap to hyperspace!|See you at Hack Centauri on December 14th!",
+      "Thanks for signing up!|Prepare for lift-off on December 14th. The universe is waiting!",
+      "We’re over the moon you’re joining us!|Get ready for an out-of-this-world experience on December 14th!",
+      "Your registration is a perfect orbit!|We’ll see you in the galaxy of Hack Centauri on December 14th!"
+    ];
+
+    var speedForward = 100,
+        speedWait = 1000,
+        speedBetweenLines = 1000,
+        speedBackspace = 25;
+
+    typeWriter("output", textArray);
+
+    function typeWriter(id, ar) {
+      var element = document.getElementById(id),
+          aString = ar[a],
+          eHeader = element.querySelector("h1"),
+          eParagraph = element.querySelector("p");
+      
+      if (!isBackspacing) {
+        if (i < aString.length) {
+          if (aString.charAt(i) == "|") {
+            isParagraph = true;
+            eHeader.classList.remove("cursor");
+            eParagraph.classList.add("cursor");
+            i++;
+            setTimeout(function() { typeWriter(id, ar); }, speedBetweenLines);
+          } else {
+            if (!isParagraph) {
+              eHeader.textContent += aString.charAt(i);
+            } else {
+              eParagraph.textContent += aString.charAt(i);
+            }
+            i++;
+            setTimeout(function() { typeWriter(id, ar); }, speedForward);
+          }
+        } else if (i == aString.length) {
+          isBackspacing = true;
+          setTimeout(function() { typeWriter(id, ar); }, speedWait);
+        }
+      } else {
+        if (eParagraph.textContent.length > 0 || eHeader.textContent.length > 0) {
+          if (eParagraph.textContent.length > 0) {
+            eParagraph.textContent = eParagraph.textContent.substring(0, eParagraph.textContent.length - 1);
+          } else if (eHeader.textContent.length > 0) {
+            eParagraph.classList.remove("cursor");
+            eHeader.classList.add("cursor");
+            eHeader.textContent = eHeader.textContent.substring(0, eHeader.textContent.length - 1);
+          }
+          setTimeout(function() { typeWriter(id, ar); }, speedBackspace);
+        } else {
+          isBackspacing = false;
+          i = 0;
+          isParagraph = false;
+          a = (a + 1) % ar.length;
+          setTimeout(function() { typeWriter(id, ar); }, 50);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
